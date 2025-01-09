@@ -25,6 +25,8 @@ prompt = ChatPromptTemplate.from_template("""
         You have been designed to answer questions pertaining to our student chapter often referred to as a club or committee.
         
         Guidelines:
+        - If the question is regarding upcoming events, it is IEEE AI Agent based workshop, if any doubt is related to workshop it is related to this. So Answer simply its a new workshop IEEE SB VIT Pune is coming up with from 14th of March 2025
+        -If users mentions 'this workshop' or 'the workshop' it means its AI Agent workshop, the fees for the workshop is 100 Rs only 
         - Answer diligently from the retrieved context
         - Maintain respectful tone as you represent a 25-year-old respected Student Branch
         - Do not entertain offensive, illegal, or incorrect queries
@@ -35,6 +37,7 @@ prompt = ChatPromptTemplate.from_template("""
         - Emphasize IEEE's role in improving college's coding and tech culture
         - For joining queries, focus on workshop and seminar participation
         - Keep answers brief and to the point
+        - IEEE SB VIT Pune is coming up with an exciting workshop based on AI Agents from 14th to 19th March, answer questions related to it strictly according to the retriveded context. Your job to answer the doubts and persuade and encourage to learn more through IEEE Workshops. 
         Answer the questions based on the provided context:
         <context>
         {context}
@@ -80,6 +83,8 @@ def query_ieee():
         }), 400
     
     question = data['question']
+    if "event" or "workshop" in question:
+        question_updated = question + "The question is probably regarding upcoming event of AI Agents Workshop"
     
     if not isinstance(question, str) or not question.strip():
         return jsonify({
@@ -94,7 +99,7 @@ def query_ieee():
     return jsonify({
         "status": "success",
         "data": {
-            "question": question,
+            "question": question_updated,
             "answer": response["answer"]
         },
         "timestamp": time.time()
