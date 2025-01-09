@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IEEE Student Branch VIT Pune Chatbot</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../static/styles.css" rel="stylesheet">
+</head>
+<body>
+    <div class="landing-container">
+        <!-- Logo and Welcome Section -->
+        <div class="header-section">
+            <img src="../static/images/ieee-logo.png" alt="IEEE Logo" class="ieee-logo">
+            <h1 class="welcome-text">Welcome to IEEE Student Branch VIT Pune's Chatbot</h1>
+        </div>
+
+        <!-- Chat Messages Container (initially hidden) -->
+        <div id="chat-messages" class="chat-messages hidden"></div>
+
+        <!-- Sample Queries Grid -->
+        <div class="queries-grid" id="queries-grid">
+            <div class="query-container" onclick="handleSampleQuery(this)">
+                <p>What is IEEE Student Branch?</p>
+            </div>
+            <div class="query-container" onclick="handleSampleQuery(this)">
+                <p>Tell me about upcoming events</p>
+            </div>
+            <div class="query-container" onclick="handleSampleQuery(this)">
+                <p>How can I become a member?</p>
+            </div>
+            <div class="query-container" onclick="handleSampleQuery(this)">
+                <p>What are the benefits of joining IEEE?</p>
+            </div>
+        </div>
+
+        <div class="message-input-container">
+            <input type="text" id="user-input" class="message-input" placeholder="Type here">
+            <button class="send-button" onclick="sendMessage()">
+                <img src="../static/images/send.png" alt="Send" class="send-icon">
+            </button>
+        </div>
+        <!-- Message Input Section -->
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../static/js/main.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</body>
+</html>
