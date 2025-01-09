@@ -1,26 +1,97 @@
-// frontend/static/js/main.js
 document.addEventListener('DOMContentLoaded', () => {
     const userInput = document.getElementById('user-input');
+    const messageInput = document.querySelector('.message-input-container');
     
+    // Add focus effects to input container
+    userInput.addEventListener('focus', () => {
+        messageInput.style.transform = 'translateX(-50%) scale(1.02)';
+        messageInput.style.boxShadow = '0 8px 32px rgba(0, 74, 173, 0.2)';
+    });
+    
+    userInput.addEventListener('blur', () => {
+        messageInput.style.transform = 'translateX(-50%) scale(1)';
+        messageInput.style.boxShadow = '0 4px 24px rgba(0, 0, 0, 0.1)';
+    });
+    
+    // Handle Enter key
     userInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
             sendMessage();
         }
     });
 
+    // Add hover effects to query containers
+    const queryContainers = document.querySelectorAll('.query-container');
+    queryContainers.forEach(container => {
+        container.addEventListener('mousemove', handleQueryHover);
+        container.addEventListener('mouseleave', removeQueryHover);
+    });
+
+    animateWelcomeSection();
     checkApiHealth();
+
+    // Add sidebar toggle functionality
+    document.getElementById('sidebarToggle').addEventListener('click', toggleSidebar);
+    
+    // Close sidebar when clicking outside
+    document.addEventListener('click', (e) => {
+        const sidebar = document.getElementById('sidebar');
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        
+        if (!sidebar.contains(e.target) && e.target !== sidebarToggle) {
+            sidebar.classList.remove('active');
+        }
+    });
 });
 
-async function checkApiHealth() {
-    try {
-        const response = await fetch('/api/v1/health');
-        const data = await response.json();
-        if (data.status !== 'success') {
-            console.error('API health check failed');
-        }
-    } catch (error) {
-        console.error('API health check failed:', error);
-    }
+function handleQueryHover(e) {
+    const rect = e.target.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    
+    e.target.style.background = `
+        radial-gradient(circle at ${x}px ${y}px, 
+        rgba(255,255,255,0.1) 0%, 
+        rgba(0,74,173,0) 50%)
+    `;
+}
+
+function removeQueryHover(e) {
+    e.target.style.background = '';
+}
+
+function animateWelcomeSection() {
+    const header = document.querySelector('.header-section');
+    const logo = document.querySelector('.ieee-logo');
+    const welcomeText = document.querySelector('.welcome-text');
+    const queriesGrid = document.querySelector('.queries-grid');
+    
+    // Initial animations
+    header.style.opacity = '0';
+    logo.style.opacity = '0';
+    welcomeText.style.opacity = '0';
+    queriesGrid.style.opacity = '0';
+    
+    // Sequence animations
+    setTimeout(() => {
+        header.style.opacity = '1';
+        header.style.transform = 'translateY(0)';
+    }, 300);
+    
+    setTimeout(() => {
+        logo.style.opacity = '1';
+        logo.style.transform = 'translateY(0)';
+    }, 600);
+    
+    setTimeout(() => {
+        welcomeText.style.opacity = '1';
+        welcomeText.style.transform = 'translateY(0)';
+    }, 900);
+    
+    setTimeout(() => {
+        queriesGrid.style.opacity = '1';
+        queriesGrid.style.transform = 'translateY(0)';
+    }, 1200);
 }
 
 function handleSampleQuery(element) {
@@ -36,29 +107,47 @@ function minimizeHeader() {
     const queriesGrid = document.getElementById('queries-grid');
     const chatMessages = document.getElementById('chat-messages');
 
-    // Minimize header and logo
+    // Smooth transitions
     header.classList.add('minimized');
     logo.classList.add('minimized');
-
-    // Hide welcome text and queries grid
     welcomeText.classList.add('hidden');
-    queriesGrid.classList.add('hidden');
+    
+    // Animate queries grid out
+    queriesGrid.style.transform = 'translateY(20px)';
+    queriesGrid.style.opacity = '0';
+    setTimeout(() => {
+        queriesGrid.classList.add('hidden');
+    }, 300);
 
-    // Show chat messages
-    chatMessages.classList.remove('hidden');
+    // Animate chat messages in
+    chatMessages.style.display = 'block';
+    setTimeout(() => {
+        chatMessages.classList.remove('hidden');
+        chatMessages.style.opacity = '1';
+        chatMessages.style.transform = 'translateY(0)';
+    }, 300);
 }
 
 function showLoader() {
     const loader = document.createElement('div');
     loader.className = 'loader-container';
     loader.innerHTML = '<img src="/static/images/loader.gif" alt="Loading..." class="loader-gif">';
+    loader.style.opacity = '0';
     document.getElementById('chat-messages').appendChild(loader);
+    
+    requestAnimationFrame(() => {
+        loader.style.opacity = '1';
+    });
+    
     return loader;
 }
 
 function removeLoader(loader) {
     if (loader && loader.parentElement) {
-        loader.parentElement.removeChild(loader);
+        loader.style.opacity = '0';
+        setTimeout(() => {
+            loader.parentElement.removeChild(loader);
+        }, 300);
     }
 }
 
@@ -105,19 +194,29 @@ function addMessageToChat(text, sender, isHtml = false) {
     const messageDiv = document.createElement('div');
     
     messageDiv.classList.add('message', `${sender}-message`);
+    messageDiv.style.opacity = '0';
+    messageDiv.style.transform = 'translateY(20px)';
 
-    // Render raw HTML if `isHtml` is true, else render as plain text
     if (isHtml) {
-        messageDiv.innerHTML = text; 
+        messageDiv.innerHTML = text;
     } else {
         messageDiv.textContent = text;
     }
     
     messagesContainer.appendChild(messageDiv);
     
-    // Scroll to the bottom
-    messageDiv.scrollIntoView({ behavior: 'smooth' });
+    // Trigger animation
+    setTimeout(() => {
+        messageDiv.style.opacity = '1';
+        messageDiv.style.transform = 'translateY(0)';
+    }, 50);
+    
+    // Smooth scroll
+    setTimeout(() => {
+        messageDiv.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    }, 100);
 }
+
 
 function displayTypingEffect(text, sender) {
     const messagesContainer = document.getElementById('chat-messages');
@@ -141,4 +240,9 @@ function displayTypingEffect(text, sender) {
     }
 
     type();
+}
+
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    sidebar.classList.toggle('active');
 }
